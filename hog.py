@@ -1,5 +1,3 @@
-"""CS 61A Presents The Game of Hog."""
-
 from dice import six_sided, four_sided, make_test_dice
 from ucb import main, trace, interact
 
@@ -20,7 +18,6 @@ def roll_dice(num_rolls, dice=six_sided):
     # These assert statements ensure that num_rolls is a positive integer.
     assert type(num_rolls) == int, 'num_rolls must be an integer.'
     assert num_rolls > 0, 'Must roll at least once.'
-    # BEGIN PROBLEM 1
     roll_counter = 0
     score = 0
     sow_sad = False
@@ -34,17 +31,12 @@ def roll_dice(num_rolls, dice=six_sided):
         return 1
     else:
         return score
-    
-
-    # END PROBLEM 1
-
 
 def piggy_points(score):
     """Return the points scored from rolling 0 dice.
 
     score:  The opponent's current score.
     """
-    # BEGIN PROBLEM 2
     squared_score = score ** 2
     digit = 9
     if squared_score == 0:
@@ -56,10 +48,6 @@ def piggy_points(score):
             squared_score = squared_score // 10
         return digit + 3
         
-    
-    
-
-
 def take_turn(num_rolls, opponent_score, dice=six_sided, goal=GOAL_SCORE):
     """Simulate a turn rolling NUM_ROLLS dice, which may be 0 in the case
     of a player using Piggy Points.
@@ -75,14 +63,11 @@ def take_turn(num_rolls, opponent_score, dice=six_sided, goal=GOAL_SCORE):
     assert num_rolls >= 0, 'Cannot roll a negative number of dice in take_turn.'
     assert num_rolls <= 10, 'Cannot roll more than 10 dice.'
     assert opponent_score < goal, 'The game should be over.'
-    # BEGIN PROBLEM 3
     if num_rolls == 0:
         players_score = piggy_points(opponent_score)
     else:
         players_score = roll_dice(num_rolls, dice)
     return players_score
-    # END PROBLEM 3
-
 
 def more_boar(player_score, opponent_score):
     """Return whether the player gets an extra turn.
@@ -101,7 +86,6 @@ def more_boar(player_score, opponent_score):
     >>> more_boar(7, 8)
     False
     """
-    # BEGIN PROBLEM 4
     def digit_getter(position, number):
         slice_me = str(number)
         return int(slice_me[position])
@@ -127,11 +111,6 @@ def more_boar(player_score, opponent_score):
     else: 
         return False
         
-
-
-    # END PROBLEM 4
-
-
 def next_player(who):
     """Return the other player, for a player WHO numbered 0 or 1.
 
@@ -166,7 +145,6 @@ def play(strategy0, strategy1, score0=0, score1=0, dice=six_sided,
     say:        The commentary function to call at the end of the first turn.
     """
     who = 0  # Who is about to take a turn, 0 (first) or 1 (second)
-    # BEGIN PROBLEM 5\
     while score0 < goal and score1 < goal:
         if who==0:
             score0 += take_turn(strategy0(score0, score1), score1, dice, goal)
@@ -177,14 +155,6 @@ def play(strategy0, strategy1, score0=0, score1=0, dice=six_sided,
         say= say(score0, score1)
         if moreboar==False:
             who = 1-who
-
-        
-    
-    # END PROBLEM 5
-    # (note that the indentation for the problem 6 prompt (***YOUR CODE HERE***) might be misleading)
-    # BEGIN PROBLEM 6
-    "*** YOUR CODE HERE ***"
-    # END PROBLEM 6
     return score0, score1
 
 
@@ -266,7 +236,6 @@ def announce_highest(who, last_score=0, running_high=0):
     Player 1 has reached a new maximum point gain. 30 point(s)!
     """
     assert who == 0 or who == 1, 'The who argument should indicate a player.'
-    # BEGIN PROBLEM 7
     def say(score0, score1):
         if who==0:
             if score0 - last_score > running_high:
@@ -283,8 +252,6 @@ def announce_highest(who, last_score=0, running_high=0):
             else:
                 return announce_highest(who, score1, running_high)
     return say
-
-    # END PROBLEM 7
 
 
 #######################
@@ -322,9 +289,6 @@ def make_averaged(original_function, trials_count=1000):
     >>> averaged_dice(1, dice)
     3.0
     """
-    # BEGIN PROBLEM 8
-    "*** YOUR CODE HERE ***"
-    # END PROBLEM 8
     def new_function(*args):
         counter=0
         value = 0
@@ -343,25 +307,18 @@ def max_scoring_num_rolls(dice=six_sided, trials_count=1000):
     >>> max_scoring_num_rolls(dice)
     1
     """
-    # BEGIN PROBLEM 9
     dice_rollin = 1
     intermediate_score = make_averaged(roll_dice, trials_count)
     best_score = intermediate_score(1, dice)
     best_roll = 1
     while dice_rollin + 1 <= 10:
         dice_rollin += 1
-
         intermediate_new_score = make_averaged(roll_dice, trials_count)
         new_score = intermediate_new_score(dice_rollin, dice)
-
-        print('DEBUG: ', dice_rollin, new_score, best_score)
-
         if new_score > best_score:
             best_score = new_score
             best_roll = dice_rollin
     return best_roll
-
-    # END PROBLEM 9
 
 
 def winner(strategy0, strategy1):
@@ -379,7 +336,6 @@ def average_win_rate(strategy, baseline=always_roll(6)):
     """
     win_rate_as_player_0 = 1 - make_averaged(winner)(strategy, baseline)
     win_rate_as_player_1 = make_averaged(winner)(baseline, strategy)
-
     return (win_rate_as_player_0 + win_rate_as_player_1) / 2
 
 
@@ -389,23 +345,15 @@ def run_experiments():
     print('Max scoring num rolls for six-sided dice:', six_sided_max)
     print('always_roll(6) win rate:', average_win_rate(always_roll(6)))
 
-    #print('always_roll(8) win rate:', average_win_rate(always_roll(8)))
-    #print('piggypoints_strategy win rate:', average_win_rate(piggypoints_strategy))
-    #print('more_boar_strategy win rate:', average_win_rate(more_boar_strategy))
-    #print('final_strategy win rate:', average_win_rate(final_strategy))
-    "*** You may add additional experiments as you wish ***"
-
 
 def piggypoints_strategy(score, opponent_score, cutoff=8, num_rolls=6):
     """This strategy rolls 0 dice if that gives at least CUTOFF points, and
     rolls NUM_ROLLS otherwise.
     """
-    # BEGIN PROBLEM 10
     if piggy_points(opponent_score) >= cutoff:
         return 0
     else:
         return num_rolls
-    # END PROBLEM 10
 
 
 def more_boar_strategy(score, opponent_score, cutoff=8, num_rolls=6):
@@ -413,7 +361,6 @@ def more_boar_strategy(score, opponent_score, cutoff=8, num_rolls=6):
     rolls 0 dice if it gives at least CUTOFF points and does not give an extra turn.
     Otherwise, it rolls NUM_ROLLS.
     """
-    # BEGIN PROBLEM 11
     score = score + piggy_points(opponent_score)
     if more_boar(score, opponent_score) == True:
         return 0
@@ -421,17 +368,8 @@ def more_boar_strategy(score, opponent_score, cutoff=8, num_rolls=6):
         return 0
     else:
         return num_rolls
-    # END PROBLEM 11
+    
 
-
-def final_strategy(score, opponent_score):
-    """Write a brief description of your final strategy.
-
-    *** YOUR DESCRIPTION HERE ***
-    """
-    # BEGIN PROBLEM 12
-    return 6  # Replace this statement
-    # END PROBLEM 12
 
 ##########################
 # Command Line Interface #
